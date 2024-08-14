@@ -1,0 +1,18 @@
+<chatbot-header></chatbot-header>
+<chatbot-default-questions 
+  (onMakeQuestion)="makeQuestion($event)" 
+  [defaultQuestionsHide]="defaultQuestionsHide">
+</chatbot-default-questions>
+
+<div *ngFor="let message of messages">
+  <chatbot-user-message [question]="message.questions"></chatbot-user-message>
+  <chatbot-chat-message [answer]="message.answer"></chatbot-chat-message>
+</div>
+<div class="fixed z-10 bottom-0 inset-x-0 flex justify-center items-center bg-white">
+  <span class="absolute bottom-full h-10 inset-x-0 from-white/0 bg-gradient-to-b to-white pointer-events-none">
+  </span>
+  <div class="w-full max-w-screen-md rounded-xl px-4 md:px-5 py-6">
+    <chatbot-input-question (onMakeQuestion)="makeQuestion($event)"></chatbot-input-question>
+    <chatbot-power-by></chatbot-power-by>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<!-- <form class="relative m-auto flex items-center gap-4 justify-center">
+    <input placeholder="Your question..." required="" class="transition h-10 md:h-12 pl-4 pr-12 flex-1 rounded-xl border border-gray-400 text-base disabled:bg-gray-100" type="text" value="">
+    <button type="submit" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-50">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-arrow-back">
+            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
+        </svg>
+    </button>
+</form> -->
+
+<div class="relative m-auto flex items-center gap-4 justify-center">
+    <input
+        #txtInputValue
+        placeholder="Your question..."
+        [value]="question"
+        class="transition h-10 md:h-12 pl-4 pr-12 flex-1 rounded-xl border border-gray-400 text-base disabled:bg-gray-100" 
+        type="text"
+        (keyup.enter)="makeQuestions(txtInputValue.value)">
+
+    <button (click)="makeQuestions(txtInputValue.value)"   type="submit" tabindex="-1" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-50">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-arrow-back">
+            <path d="M9 11l-4 4l4 4m-4 -4h11a4 4 0 0 0 0 -8h-1"></path>
+        </svg>
+    </button>
+</div>
