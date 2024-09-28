@@ -1,0 +1,67 @@
+<chatbot-header></chatbot-header>
+
+<div class="max-w-4xl mx-auto p-4 bg-white rounded-lg shadow flex">
+  <!-- Contenedor del formulario -->
+  <div class="flex-1 p-4">
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <div>
+        <label for="file-upload" class="block text-sm font-medium text-gray-700">Seleccionar archivo PDF</label>
+        <input
+          id="file-upload"
+          type="file"
+          accept=".pdf"
+          (change)="onFileSelected($event)"
+          class="mt-1 block w-full text-sm text-gray-500
+                 file:mr-4 file:py-2 file:px-4
+                 file:rounded-full file:border-0
+                 file:text-sm file:font-semibold
+                 file:bg-indigo-50 file:text-dark-700
+                 hover:file:bg-indigo-400"
+        >
+      </div>
+      <div>
+        <label for="document-name" class="block text-sm font-medium text-gray-700">Nombre del documento</label>
+        <input
+          id="document-name"
+          type="text"
+          formControlName="documentName"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-400 focus:ring focus:ring-offset-indigo-200 focus:ring-opacity-50"
+          placeholder="Ingrese el nombre del documento"
+        >
+      </div>
+      <div class="flex items-center space-x-2">
+        <input
+          id="is-unique"
+          type="checkbox"
+          formControlName="isUnique"
+          class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-400 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:indigo-opacity-50"
+        >
+        <label for="is-unique" class="text-sm font-medium text-gray-700">Documento único</label>
+      </div>
+      <button
+        type="submit"
+        class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:indigo-2 focus:indigo-offset-2 focus:indigo-500"
+      >
+        Subir documento
+      </button>
+    </form>
+  </div>
+
+  <!-- Contenedor de documentos subidos -->
+  <div class="flex-1 p-4">
+    <h2 class="text-lg font-semibold mb-4">Documentos subidos</h2>
+    <ul class="space-y-2">
+      <li *ngFor="let doc of documents" class="flex items-center justify-between bg-gray-100 p-2 rounded">
+        <span>{{ doc.name }} <span *ngIf="doc.isUnique" class="text-xs text-blue-600">(Único)</span></span>
+        <button
+          (click)="deleteDocument(doc.id)"
+          class="text-red-600 hover:text-red-800"
+        >Eliminar {{ doc.name }}
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>
