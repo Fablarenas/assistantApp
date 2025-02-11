@@ -1,4 +1,4 @@
 export interface AssistantResponse{
-    questions: string,
-    answer: string
+    questions: string;
+    answer: string;
 }

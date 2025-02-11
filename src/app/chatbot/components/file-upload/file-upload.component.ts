@@ -1,31 +1,28 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeaderComponent } from "../header/header.component";
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { AssistanServiceService } from '../../services/assistan-service.service';
+
 interface Document {
   id: string;
   name: string;
-  isUnique: boolean;
 }
+
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [HeaderComponent],
+  imports: [HeaderComponent, FormsModule, HttpClientModule, CommonModule], // Importar módulos necesarios
+  providers: [AssistanServiceService], // Registrar el servicio
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.css'
 })
-
-
 export class FileUploadComponent {
-  public uploadForm: FormGroup;
   documents: Document[] = [];
   selectedFile: File | null = null;
 
-  constructor(private fb: FormBuilder) {
-    this.uploadForm = this.fb.group({
-      documentName: ['', Validators.required],
-      isUnique: [false]
-    });
-  }
+  constructor(private assistanService: AssistanServiceService) {}
 
   onFileSelected(event: Event): void {
     const element = event.target as HTMLInputElement;
@@ -36,17 +33,24 @@ export class FileUploadComponent {
   }
 
   onSubmit(): void {
-    if (this.uploadForm.valid && this.selectedFile && this.selectedFile.type === 'application/pdf') {
-      const newDocument: Document = {
-        id: Date.now().toString(),
-        name: this.uploadForm.get('documentName')?.value,
-        isUnique: this.uploadForm.get('isUnique')?.value
-      };
-      this.documents.push(newDocument);
-      this.uploadForm.reset();
-      this.selectedFile = null;
+    console.log("Entró a enviar el PDF");
+    if (this.selectedFile && this.selectedFile.type === 'application/pdf') {
+      this.assistanService.uploadFile(this.selectedFile).subscribe({
+        next: (response) => {
+          alert('Archivo subido exitosamente');
+          const newDocument: Document = {
+            id: Date.now().toString(),
+            name: this.selectedFile?.name|| ''
+          };
+          this.documents.push(newDocument);
+          this.selectedFile = null;
+        },
+        error: (error) => {
+          alert('Error al subir el archivo');
+        }
+      });
     } else {
-      alert('Por favor, selecciona un archivo PDF válido y asigna un nombre.');
+      alert('Por favor, selecciona un archivo PDF válido.');
     }
   }
 
