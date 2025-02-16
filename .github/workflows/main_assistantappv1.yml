@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +23,11 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: npm install and build
         run: |
           npm install
           npm run build --if-present
-          # npm run test --if-present
+          # Si hay algún comando de test, asegurarse de que esté comentado o eliminado
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -45,8 +45,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -64,11 +64,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7D82F3FF9AC246848770F52A669D9A68 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CA779B8A08B64A038EFAB38773908F48 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'assistantappv1'
           slot-name: 'Production'
           package: .
-          
