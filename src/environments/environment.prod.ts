@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://localhost:8000'
+    apiUrl: 'https://assistantapi-hhhjgqbvhuhtchdn.centralus-01.azurewebsites.net'
   };
