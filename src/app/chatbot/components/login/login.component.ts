@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { jwtDecode } from "jwt-decode";
-
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -43,6 +43,6 @@ export class LoginComponent {
   }
 
   loginWithMicrosoft(): void {
-    window.location.href = 'http://localhost:8000/login';
+    window.location.href = `${environment.apiUrl}/login`;
   }
 }
