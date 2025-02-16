@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "http-server dist/assistant-app -p $PORT",
+    "build": "ng build --configuration production",
+    "postinstall": "npm run build",
     "watch": "ng build --watch --configuration development"
   },
   "private": true,
@@ -21,7 +22,8 @@
     "marked": "^14.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.3"
+    "zone.js": "~0.14.3",
+    "http-server": "^14.1.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.1.2",
