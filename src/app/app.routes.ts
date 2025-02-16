@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: 'fileupload', component: FileUploadComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
-  { path: '**', redirectTo: 'login' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
 @NgModule({
