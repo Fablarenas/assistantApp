@@ -70,5 +70,5 @@ jobs:
         with:
           app-name: 'assistanpAppv3'
           slot-name: 'Production'
-          package: .
+          package: release.zip
           
