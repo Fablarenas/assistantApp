@@ -69,6 +69,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'assistanpAppv3'
-          slot-name: 'Production'
-          package: release.zip
+          slot-name: 'development'
+          package: .
           

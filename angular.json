@@ -38,14 +38,11 @@
           "sourceMap": true
         }
       },
-      "defaultConfiguration": "production"
+      "defaultConfiguration": "development"
     },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "assistantApp:build:production"
-            },
             "development": {
               "buildTarget": "assistantApp:build:development"
             }
