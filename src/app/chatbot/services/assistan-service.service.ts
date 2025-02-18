@@ -14,7 +14,7 @@ export class AssistanServiceService {
 
   private url: string = `${environment.apiUrl}/question`;
   private uploadUrl: string = `${environment.apiUrl}/upload/`;
-  private askUrl: string = `${environment.apiUrl}/chat/`;
+  private askUrl: string = `${environment.apiUrl}/chat`;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -36,16 +36,26 @@ export class AssistanServiceService {
 
   getChatResponseStream(question: string): Observable<string> {
     return new Observable<string>((observer) => {
-      const params = new HttpParams().set('question', question);
-      const eventSource = new EventSource(`${this.askUrl}?${params.toString()}`);
+      console.log("Iniciando getChatResponseStream para la pregunta:", question);
+  
+      // Configuramos los parámetros incluyendo el token
+      const params = new HttpParams()
+        .set('question', question)
+        .set('token', 'admin');
+      const url = `${this.askUrl}?${params.toString()}`;
+      console.log("URL EventSource:", url);
+  
+      // Creamos el EventSource
+      const eventSource = new EventSource(url);
   
       eventSource.onopen = () => {
         console.log('Conexión con EventSource abierta.');
       };
   
       eventSource.onmessage = (event) => {
+        console.log('Evento onmessage recibido:', event);
         console.log('Chunk recibido:', event.data);
-        
+  
         if (event.data === '[END]') {
           console.log('Fin de la transmisión recibido. Cerrando EventSource.');
           observer.complete();
@@ -61,10 +71,12 @@ export class AssistanServiceService {
         eventSource.close();
       };
   
+      // Cuando se desuscriba, cerramos el EventSource
       return () => {
         console.log('Cerrando conexión con EventSource.');
         eventSource.close();
       };
     });
   }
+  
 }
