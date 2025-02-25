@@ -28,20 +28,21 @@ export class MainChatBotComponent {
 
   makeQuestion(question: string) {
     this.defaultQuestionsHide = true;
-
-    // Agrega la pregunta a la lista de mensajes con un estado inicial vacío
-    this.messages.push({ questions: question, answer: ' ' });
-
+  
+    // Agregamos la pregunta a la lista de mensajes con un estado inicial vacío
+    this.messages.push({ questions: question, answer: '' });
+  
     let accumulatedResponse = '';
-
-    // Llama al servicio para obtener la respuesta en streaming
+  
+    // Nos suscribimos al SSE
     this.assistanService.getChatResponseStream(question).subscribe({
-      next: (responseChunk) => {
-        accumulatedResponse += responseChunk; // Acumula todos los chunks
+      next: (chunkLimpio) => {
+        // Este "chunkLimpio" ya no tiene "html " ni "body" 
+        // pero el SSE está chunkificado, así que lo vamos sumando
+        accumulatedResponse += chunkLimpio;
       },
       error: (error) => {
         console.error('Error al obtener la respuesta:', error);
-        
         const index = this.messages.findIndex(msg => msg.questions === question);
         if (index !== -1) {
           this.messages[index].answer = 'Hubo un error al obtener la respuesta.';
@@ -49,9 +50,10 @@ export class MainChatBotComponent {
         }
       },
       complete: () => {
+        // Indica que ya no habrá más chunks
         const index = this.messages.findIndex(msg => msg.questions === question);
         if (index !== -1) {
-          // Aplicar el efecto de escritura después de recibir toda la respuesta
+          // Mostramos todo con typing effect
           this.animateTypingEffect(index, accumulatedResponse);
         }
       }
@@ -59,7 +61,7 @@ export class MainChatBotComponent {
   }
 
   // Método para animar el efecto de escritura
-  animateTypingEffect(index: number, fullText: string, speed: number = 50) {
+  animateTypingEffect(index: number, fullText: string, speed: number = 10) {
     let currentIndex = 0;
     const type = () => {
       if (currentIndex < fullText.length) {

@@ -36,47 +36,54 @@ export class AssistanServiceService {
 
   getChatResponseStream(question: string): Observable<string> {
     return new Observable<string>((observer) => {
-      console.log("Iniciando getChatResponseStream para la pregunta:", question);
-  
-      // Configuramos los parámetros incluyendo el token
+      // Acumulador para todo el contenido que llegue
+      let accumulatedText = '';
+
+      // Parámetros: ajusta "token" si tu backend lo requiere
       const params = new HttpParams()
         .set('question', question)
-        .set('token', 'admin');
+        .set('token', 'admin'); // Token quemado como ejemplo
+
+      // Construimos la URL SSE
       const url = `${this.askUrl}?${params.toString()}`;
-      console.log("URL EventSource:", url);
-  
       // Creamos el EventSource
       const eventSource = new EventSource(url);
-  
+
       eventSource.onopen = () => {
-        console.log('Conexión con EventSource abierta.');
+        console.log('Conexión SSE abierta.');
       };
-  
+
       eventSource.onmessage = (event) => {
-        console.log('Evento onmessage recibido:', event);
-        console.log('Chunk recibido:', event.data);
-  
+        // Cuando el backend avisa [END], significa que no habrá más chunks
         if (event.data === '[END]') {
-          console.log('Fin de la transmisión recibido. Cerrando EventSource.');
+          console.log('Fin de la transmisión. Cerrando SSE.');
+          observer.next(accumulatedText);
           observer.complete();
           eventSource.close();
         } else {
-          observer.next(event.data);
+          // Limpieza del chunk:
+          // 1) Quitar el prefijo "data: "
+          let chunk = event.data.replace(/^data:\s*/, '');
+
+          // 2) Algunos backends ponen "html " al inicio -> removerlo
+          chunk = chunk.replace(/^html\s*/, '');
+
+          // 4) Acumularlo
+          accumulatedText += chunk;
         }
       };
-  
+
       eventSource.onerror = (error) => {
-        console.error('Error en EventSource:', error);
-        observer.error(new Error('Ocurrió un error con el EventSource.'));
+        console.error('Error en SSE:', error);
+        observer.error(error);
         eventSource.close();
       };
-  
-      // Cuando se desuscriba, cerramos el EventSource
+
+      // Si el consumidor se desuscribe, cerramos la conexión
       return () => {
-        console.log('Cerrando conexión con EventSource.');
+        console.log('Cerrando EventSource por desuscripción.');
         eventSource.close();
       };
     });
   }
-  
 }
