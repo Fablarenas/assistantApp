@@ -46,7 +46,12 @@ export class FileUploadComponent {
           this.selectedFile = null;
         },
         error: (error) => {
-          alert('Error al subir el archivo');
+          if (error.status === 401 || error.status === 403) {
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
+          } else {
+            alert('Error subiendo archivo:');
+          }
         }
       });
     } else {

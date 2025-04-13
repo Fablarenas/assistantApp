@@ -27,8 +27,10 @@ export class AssistanServiceService {
     const formData = new FormData();
     formData.append('file', file);
 
+    const token = localStorage.getItem('access_token');
     const headers = new HttpHeaders({
-      'accept': 'application/json'
+      'accept': 'application/json',
+      'Authorization': `Bearer ${token}`
     });
 
     return this.httpClient.post<any>(this.uploadUrl, formData, { headers });
@@ -36,49 +38,52 @@ export class AssistanServiceService {
 
   getChatResponseStream(question: string): Observable<string> {
     return new Observable<string>((observer) => {
-      // Acumulador para todo el contenido que llegue
       let accumulatedText = '';
-
-      // Parámetros: ajusta "token" si tu backend lo requiere
+  
+      const token = localStorage.getItem('access_token') || '';
+  
+      if (!token) {
+        console.warn('No hay token. Redirigiendo al login.');
+        window.location.href = '/login';
+        observer.complete();
+        return;
+      }
+  
       const params = new HttpParams()
         .set('question', question)
-        .set('token', 'admin'); // Token quemado como ejemplo
-
-      // Construimos la URL SSE
+        .set('token', token);  // Ahora sí token real
+  
       const url = `${this.askUrl}?${params.toString()}`;
-      // Creamos el EventSource
       const eventSource = new EventSource(url);
-
+  
       eventSource.onopen = () => {
         console.log('Conexión SSE abierta.');
       };
-
+  
       eventSource.onmessage = (event) => {
-        // Cuando el backend avisa [END], significa que no habrá más chunks
         if (event.data === '[END]') {
           console.log('Fin de la transmisión. Cerrando SSE.');
           observer.next(accumulatedText);
           observer.complete();
           eventSource.close();
         } else {
-          // Limpieza del chunk:
-          // 1) Quitar el prefijo "data: "
           let chunk = event.data.replace(/^data:\s*/, '');
-
-          // 2) Algunos backends ponen "html " al inicio -> removerlo
           chunk = chunk.replace(/^html\s*/, '');
-
-          // 4) Acumularlo
           accumulatedText += chunk;
         }
       };
-
+  
       eventSource.onerror = (error) => {
         console.error('Error en SSE:', error);
+  
+        // 3. Si hay error, asumir que puede ser token malo
+        localStorage.removeItem('access_token');
+        window.location.href = '/login';
+  
         observer.error(error);
         eventSource.close();
       };
-
+  
       // Si el consumidor se desuscribe, cerramos la conexión
       return () => {
         console.log('Cerrando EventSource por desuscripción.');
@@ -86,4 +91,5 @@ export class AssistanServiceService {
       };
     });
   }
+  
 }

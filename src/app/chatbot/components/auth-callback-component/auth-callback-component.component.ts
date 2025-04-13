@@ -14,8 +14,6 @@ export class AuthCallbackComponent implements OnInit {
       const token = params['token'];
       const rol = params['rol'];
       if (token) {
-        console.log('Token recibido:', token);
-
         localStorage.setItem('access_token', token);
         localStorage.setItem('rol', rol);
 
