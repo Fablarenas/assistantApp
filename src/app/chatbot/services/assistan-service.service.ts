@@ -106,16 +106,17 @@ export class AssistanServiceService {
         }
       };
   
-      eventSource.onerror = (error) => {
-        console.error('Error en SSE:', error);
-  
-        // 3. Si hay error, asumir que puede ser token malo
+    eventSource.onerror = (error: any) => {
+      console.error('Error en SSE:', error);
+
+      if (error?.status === 401 || error?.status === 403) {
         localStorage.removeItem('access_token');
         window.location.href = '/login';
-  
+      } else {
         observer.error(error);
         eventSource.close();
-      };
+      }
+    };
   
       // Si el consumidor se desuscribe, cerramos la conexión
       return () => {
